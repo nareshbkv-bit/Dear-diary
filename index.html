@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Dear Diary — Daily Contemplative Journal</title>
+
+  <!-- ==========================================================================
+       MOBILE PWA & FULL-SCREEN HOME SCREEN META TAGS
+       Allows iOS Safari and Android Chrome to launch Dear Diary in standalone
+       full-screen mode without browser URL bars.
+       ========================================================================== -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Dear Diary" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="application-name" content="Dear Diary" />
+  <meta name="theme-color" content="#F6F3EC" id="theme-color-meta" />
+  <meta name="description" content="A peaceful, distraction-free daily journal for spiritual seekers." />
+
+  <!-- SVG Favicon for desktop browsers -->
+  <link id="favicon-link" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Crect width='120' height='120' rx='28' fill='%23F6F3EC'/%3E%3Crect x='10' y='10' width='100' height='100' rx='22' fill='none' stroke='%236B7B65' stroke-width='2.5' stroke-opacity='0.35'/%3E%3Cpath d='M60 88 C60 65, 60 45, 60 32' stroke='%236B7B65' stroke-width='4' stroke-linecap='round'/%3E%3Cpath d='M60 68 C45 64, 38 50, 48 42 C56 48, 60 58, 60 68 Z' fill='%236B7B65' opacity='0.85'/%3E%3Cpath d='M60 56 C75 52, 82 38, 72 30 C64 36, 60 46, 60 56 Z' fill='%23B86B4B' opacity='0.85'/%3E%3Ccircle cx='60' cy='26' r='3.5' fill='%23B86B4B'/%3E%3C/svg%3E" />
+
+  <!-- Apple Touch Icon & Web Manifest (populated with high-res PNG on boot for iOS compatibility) -->
+  <link id="apple-touch-icon-link" rel="apple-touch-icon" href="" />
+  <link id="manifest-link" rel="manifest" href="" />
+
+  <!-- Gentle Typography: Cormorant Garamond (Contemplative Serif) & Plus Jakarta Sans (Clean UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ==========================================================================
+       1. EARTHY COLOR PALETTE & THEME VARIABLES
+       ========================================================================== */
+    :root {
+      --bg-primary: #F6F3EC;         /* Warm Parchment */
+      --bg-card: #EFECE4;            /* Soft Linen */
+      --bg-elevated: #FAF8F3;        /* Pure Ivory Paper */
+      --text-primary: #2B2925;       /* Deep Loam */
+      --text-secondary: #68635A;     /* Muted Driftwood */
+      --text-muted: #968F83;         /* Warm Stone */
+      --accent-sage: #5E6F58;        /* Moss Sage */
+      --accent-sage-hover: #4C5B47;  /* Deep Forest Sage */
+      --accent-sage-soft: rgba(94, 111, 88, 0.12);
+      --accent-clay: #B5694B;        /* Terracotta Clay */
+      --accent-clay-soft: rgba(181, 105, 75, 0.12);
+      --border-subtle: rgba(43, 41, 37, 0.1);
+      --shadow-soft: 0 12px 36px -8px rgba(43, 41, 37, 0.06);
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition-slow: 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #1B1D1A;         /* Midnight Moss */
+      --bg-card: #242723;            /* Deep Lichen */
+      --bg-elevated: #212420;        /* Quiet Slate */
+      --text-primary: #E8E4DA;       /* Soft Bone */
+      --text-secondary: #A7A297;     /* Warm Ash */
+      --text-muted: #726E65;         /* Dim Lichen */
+      --accent-sage: #8DA285;        /* Moonlit Sage */
+      --accent-sage-hover: #A2B69A;  /* Pale Sage */
+      --accent-sage-soft: rgba(141, 162, 133, 0.14);
+      --accent-clay: #D48C6F;        /* Warm Ochre */
+      --accent-clay-soft: rgba(212, 140, 111, 0.14);
+      --border-subtle: rgba(232, 228, 218, 0.09);
+      --shadow-soft: 0 14px 40px -8px rgba(0, 0, 0, 0.35);
+    }
+
+    /* ==========================================================================
+       2. BASE LAYOUT & SAFE-AREA MOBILE ADJUSTMENTS
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      transition: background-color var(--transition-slow), color var(--transition-slow);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* Respects iPhone notch and home indicator bar when launched full-screen */
+      padding-top: max(1.5rem, env(safe-area-inset-top));
+      padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
+      padding-left: max(1.25rem, env(safe-area-inset-left));
+      padding-right: max(1.25rem, env(safe-area-inset-right));
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+      animation: gentleFadeIn 0.8s ease-out;
+    }
+
+    @keyframes gentleFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       3. HEADER & NAVIGATION
+       ========================================================================== */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      line-height: 1.1;
+    }
+
+    .brand-date {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--accent-sage-soft);
+      color: var(--accent-sage);
+      border-color: var(--accent-sage);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       4. CONTEMPLATIVE QUESTION CARD
+       ========================================================================== */
+    .prompt-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.85rem 1.75rem 1.5rem;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      transition: background-color var(--transition-slow), border-color var(--transition-slow);
+    }
+
+    .prompt-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .prompt-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-sage);
+      background: var(--accent-sage-soft);
+      padding: 0.28rem 0.7rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .prompt-badge.offline {
+      color: var(--accent-clay);
+      background: var(--accent-clay-soft);
+    }
+
+    .redraw-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.25s ease;
+    }
+
+    .redraw-btn:hover:not(:disabled) {
+      color: var(--accent-sage);
+      border-color: var(--accent-sage);
+      background: var(--accent-sage-soft);
+    }
+
+    .redraw-btn:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+
+    .question-text {
+      font-family: var(--font-serif);
+      font-size: clamp(1.35rem, 3.8vw, 1.75rem);
+      font-weight: 500;
+      line-height: 1.48;
+      color: var(--text-primary);
+      transition: opacity 0.35s ease;
+      min-height: 3.5rem;
+    }
+
+    .question-text.loading {
+      opacity: 0.45;
+      font-style: italic;
+    }
+
+    /* ==========================================================================
+       5. DISTRACTION-FREE WRITING SANCTUARY
+       ========================================================================== */
+    .writing-sanctuary {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.5rem 1.65rem;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: background-color var(--transition-slow), border-color var(--transition-slow);
+    }
+
+    textarea#diary-entry {
+      width: 100%;
+      min-height: 300px;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: vertical;
+      color: var(--text-primary);
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      line-height: 1.75;
+      letter-spacing: 0.01em;
+    }
+
+    textarea#diary-entry::placeholder {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .sanctuary-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-subtle);
+      flex-wrap: wrap;
+      gap: 0.85rem;
+    }
+
+    .meta-status {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .primary-copy-btn {
+      background-color: var(--accent-sage);
+      color: #FAF8F3;
+      border: none;
+      border-radius: 999px;
+      padding: 0.72rem 1.4rem;
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 14px rgba(94, 111, 88, 0.25);
+    }
+
+    .primary-copy-btn:hover {
+      background-color: var(--accent-sage-hover);
+      transform: translateY(-1px);
+    }
+
+    .primary-copy-btn.copied {
+      background-color: var(--accent-clay);
+    }
+
+    /* ==========================================================================
+       6. MODALS (SETTINGS & PAST REFLECTIONS ARCHIVE)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 20, 18, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-sheet {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      width: 100%;
+      max-width: 520px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.75rem;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: var(--font-serif);
+      font-size: 1.55rem;
+      font-weight: 600;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-group label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-help {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .form-help a {
+      color: var(--accent-sage);
+      text-decoration: underline;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+
+    .secondary-btn {
+      background: transparent;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 0.6rem 1.1rem;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .archive-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .archive-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1rem 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .archive-item-date {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-sage);
+      font-weight: 600;
+    }
+
+    .archive-item-q {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .archive-item-a {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+      margin-top: 0.25rem;
+    }
+
+    @media (max-width: 520px) {
+      .prompt-card { padding: 1.4rem 1.25rem; }
+      .writing-sanctuary { padding: 1.2rem 1.25rem; }
+      textarea#diary-entry { min-height: 250px; font-size: 1.18rem; }
+      .primary-copy-btn { width: 100%; justify-content: center; }
+      .sanctuary-footer { flex-direction: column-reverse; align-items: stretch; }
+      .meta-status { justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="app-container">
+    <!-- Top Header -->
+    <header>
+      <div class="brand">
+        <h1 class="brand-title">Dear Diary</h1>
+        <span class="brand-date" id="current-date-label">Loading today's sanctuary...</span>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Past Reflections Archive Button -->
+        <button class="icon-btn" id="open-archive-btn" title="Past Reflections" aria-label="Open Past Reflections">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
+          </svg>
+        </button>
+
+        <!-- Dark Mode Toggle -->
+        <button class="icon-btn" id="theme-toggle-btn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
+          <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+
+        <!-- API Key & Settings Modal Button -->
+        <button class="icon-btn" id="open-settings-btn" title="Gemini API Settings" aria-label="Open Settings">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Daily Contemplative Question Card -->
+    <section class="prompt-card" aria-live="polite">
+      <div class="prompt-header">
+        <span class="prompt-badge" id="prompt-source-badge">Daily Inquiry</span>
+        <button class="redraw-btn" id="redraw-question-btn" title="Draw a fresh question">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+            <path d="M3 3v5h5"/>
+            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
+            <path d="M16 16h5v5"/>
+          </svg>
+          Draw Another Question
+        </button>
+      </div>
+      <p class="question-text" id="daily-question">
+        Gathering today's reflection...
+      </p>
+    </section>
+
+    <!-- Distraction-Free Writing Area -->
+    <section class="writing-sanctuary">
+      <textarea
+        id="diary-entry"
+        placeholder="Take a slow breath and let your thoughts unfold here..."
+        aria-label="Your daily journal reflection"
+      ></textarea>
+
+      <div class="sanctuary-footer">
+        <div class="meta-status">
+          <span id="word-count">0 words</span>
+          <span>•</span>
+          <span id="save-indicator">Saved on this device</span>
+        </div>
+
+        <button class="primary-copy-btn" id="copy-entry-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+          </svg>
+          <span id="copy-btn-label">Copy Reflection</span>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       SETTINGS MODAL (GEMINI API KEY & MODEL SELECTION)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h2 class="modal-title" id="settings-title">Sanctuary Settings</h2>
+        <button class="icon-btn" id="close-settings-btn" aria-label="Close Settings">✕</button>
+      </div>
+
+      <div class="form-group">
+        <label for="api-key-input">Gemini API Key (Stored Only on Your Device)</label>
+        <input type="password" id="api-key-input" placeholder="AIzaSy..." autocomplete="off" />
+        <p class="form-help">
+          Your key never leaves your browser except to request your daily question directly from Google's Gemini API. Get a free key from <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener">Google AI Studio</a>. If left blank, Dear Diary thoughtfully selects from its built-in anthology.
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label for="model-select">Gemini Model</label>
+        <select id="model-select">
+          <option value="gemini-2.5-flash">Gemini 2.5 Flash (Recommended & Fast)</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro (Deeply Contemplative)</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" id="cancel-settings-btn">Cancel</button>
+        <button class="primary-copy-btn" id="save-settings-btn">Save & Refresh Today's Question</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       PAST REFLECTIONS ARCHIVE MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" id="archive-modal" role="dialog" aria-modal="true" aria-labelledby="archive-title">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h2 class="modal-title" id="archive-title">Past Reflections</h2>
+        <button class="icon-btn" id="close-archive-btn" aria-label="Close Archive">✕</button>
+      </div>
+      <div class="archive-list" id="archive-list"></div>
+      <div class="modal-actions">
+        <button class="secondary-btn" id="export-all-btn">Copy All Entries</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       APPLICATION LOGIC & PWA HOME-SCREEN ICON GENERATOR
+       ========================================================================== -->
+  <script>
+    /**
+     * 1. BUILT-IN CONTEMPLATIVE BACKUP QUESTIONS
+     * Every prompt sets a gentle nostalgic or spiritual context first, followed
+     * by a clear, self-reflective question for the user to answer.
+     */
+    const BACKUP_QUESTIONS = [
+      "Think back to a quiet place from your childhood where time seemed to slow down and you felt completely safe. What sensory details from that sanctuary still linger in your memory, and how can you invite that same stillness into your life today?",
+      "Sometimes we outgrow old ambitions or versions of ourselves without ever pausing to thank them for how far they carried us. Which past version of yourself deserves your gentlest gratitude right now, and what are you ready to release?",
+      "Consider an ordinary afternoon from years ago that felt unexpectedly sacred only when you looked back at it much later. What made that simple moment so luminous, and what quiet beauty in your present week might you be overlooking?",
+      "Recall a person whose kindness shaped the way your heart moves through the world, even if your paths have since drifted apart. If you could sit together in silence for five minutes today, what unspoken thank-you would you want them to feel?",
+      "Across the seasons of your life, certain songs, scents, or landscapes have acted like portals back to your truest self. Which memory currently feels most like home to your spirit, and what is it reminding you to value?",
+      "Notice the subtle difference between the voice of your inner urgency and the quieter voice of your inner wisdom. On what question in your life right now is your deeper wisdom asking you to slow down and trust the unfolding?",
+      "Think of an old wound or disappointment that once felt overwhelming, yet gradually softened into deeper compassion over time. How did that experience reshape the way you hold space for yourself and others today?",
+      "Remember a season when you had very little certainty about the future, yet somehow found the grace to keep walking forward. What inner anchor sustained you back then, and how might you lean on it again now?",
+      "Imagine meeting your younger self on a quiet evening walk just before a major turning point in your life. What reassuring truth would you whisper to them, and how does your present self need to hear that very same message?",
+      "When life becomes noisy with obligations, the soul often speaks through small longings—a craving for silence, water, trees, or unhurried conversation. What quiet longing has been gently tapping on your shoulder lately, and how can you honor it this week?",
+      "Reflect on a piece of advice or a silent example from an elder or mentor that you didn't fully understand until recently. How has time revealed the deeper meaning of their words in your own lived experience?",
+      "Think about a threshold you are currently standing upon—between who you have been and who you are quietly becoming. What fear asks for your tenderness at this doorway, and what hope invites you to take the next step?"
+    ];
+
+    /**
+     * 2. LOCAL STORAGE KEYS
+     */
+    const STORAGE_KEYS = {
+      API_KEY: 'dear_diary_api_key',
+      MODEL: 'dear_diary_model',
+      THEME: 'dear_diary_theme',
+      DAILY_CACHE: 'dear_diary_daily_cache',     // { date: 'YYYY-MM-DD', question: '...', source: 'gemini'|'anthology' }
+      HISTORY: 'dear_diary_question_history',   // Array of past questions to prevent repeats
+      ENTRIES: 'dear_diary_entries'             // { 'YYYY-MM-DD': { date, question, text, updatedAt } }
+    };
+
+    /**
+     * 3. GENERATE HIGH-RES HOME SCREEN ICON & WEB MANIFEST DYNAMICALLY
+     * iOS Safari requires a raster PNG for apple-touch-icon. We draw a peaceful
+     * botanical leaf emblem onto an offscreen canvas at boot so the single HTML file
+     * gives users a crisp home-screen app icon with zero external image dependencies.
+     */
+    function setupMobileHomeScreenIcon() {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
+
+        // Warm parchment background
+        ctx.fillStyle = '#F6F3EC';
+        ctx.fillRect(0, 0, 512, 512);
+
+        // Subtle inner frame
+        ctx.strokeStyle = 'rgba(94, 111, 88, 0.3)';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(44, 44, 424, 424);
+
+        // Botanical stem
+        ctx.strokeStyle = '#5E6F58';
+        ctx.lineWidth = 16;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(256, 380);
+        ctx.quadraticCurveTo(256, 260, 256, 145);
+        ctx.stroke();
+
+        // Left sage leaf
+        ctx.fillStyle = '#5E6F58';
+        ctx.beginPath();
+        ctx.moveTo(256, 295);
+        ctx.bezierCurveTo(185, 280, 160, 210, 205, 175);
+        ctx.bezierCurveTo(240, 200, 256, 250, 256, 295);
+        ctx.fill();
+
+        // Right terracotta leaf
+        ctx.fillStyle = '#B5694B';
+        ctx.beginPath();
+        ctx.moveTo(256, 240);
+        ctx.bezierCurveTo(327, 225, 352, 155, 307, 120);
+        ctx.bezierCurveTo(272, 145, 256, 195, 256, 240);
+        ctx.fill();
+
+        // Sun/spirit dot above stem
+        ctx.fillStyle = '#B5694B';
+        ctx.beginPath();
+        ctx.arc(256, 108, 15, 0, Math.PI * 2);
+        ctx.fill();
+
+        const pngDataUrl = canvas.toDataURL('image/png');
+        document.getElementById('apple-touch-icon-link').href = pngDataUrl;
+
+        // Create inline Web App Manifest for Android Chrome "Install App"
+        const manifest = {
+          name: 'Dear Diary — Daily Contemplative Journal',
+          short_name: 'Dear Diary',
+          description: 'A peaceful, distraction-free daily journal for spiritual seekers.',
+          start_url: '.',
+          display: 'standalone',
+          background_color: '#F6F3EC',
+          theme_color: '#F6F3EC',
+          icons: [
+            { src: pngDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+          ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
+      } catch (e) {
+        console.warn('Could not generate dynamic PWA icon:', e);
+      }
+    }
+
+    /**
+     * 4. DATE & COMPLETENESS HELPERS
+     */
+    function getLocalDateKey() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function formatReadableDate(dateKey) {
+      const [y, m, d] = dateKey.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      return dateObj.toLocaleDateString(undefined, {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    }
+
+    // Verifies that a question is complete, reflective, and ends with a question mark
+    function isCompleteQuestion(text) {
+      if (!text || typeof text !== 'string') return false;
+      const cleaned = text.trim();
+      const words = cleaned.split(/\s+/);
+      if (cleaned.length < 40 || words.length < 8) return false;
+      if (!cleaned.endsWith('?')) return false;
+      return /\b(what|how|when|where|which|who|why)\b/i.test(cleaned);
+    }
+
+    function getQuestionHistory() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.HISTORY) || '[]');
+      } catch {
+        return [];
+      }
+    }
+
+    function addQuestionToHistory(question) {
+      const history = getQuestionHistory().filter(q => q !== question);
+      history.unshift(question);
+      localStorage.setItem(STORAGE_KEYS.HISTORY, JSON.stringify(history.slice(0, 35)));
+    }
+
+    function pickFallbackQuestion() {
+      const history = getQuestionHistory();
+      const unused = BACKUP_QUESTIONS.filter(q => !history.includes(q));
+      const pool = unused.length > 0 ? unused : BACKUP_QUESTIONS;
+      const chosen = pool[Math.floor(Math.random() * pool.length)];
+      addQuestionToHistory(chosen);
+      return chosen;
+    }
+
+    /**
+     * 5. GEMINI API QUESTION GENERATOR
+     */
+    async function fetchQuestionFromGemini(apiKey, model) {
+      const recentQuestions = getQuestionHistory().slice(0, 25);
+      const avoidBlock = recentQuestions.length > 0
+        ? `\n\nDo NOT repeat or closely paraphrase any of these recent questions:\n- ${recentQuestions.join('\n- ')}`
+        : '';
+
+      const systemPrompt =
+        "You are the gentle, contemplative voice of 'Dear Diary', a peaceful daily journal for spiritual seekers. " +
+        "Write exactly ONE complete, deeply self-reflective prompt in two parts (2 sentences total, around 35 to 60 words): " +
+        "First sentence: set a warm, nostalgic, soulful, or spiritually grounded reflection context. " +
+        "Second sentence: ask a direct, open-ended personal question ending with a question mark (?) that invites the user to look inward and write their story. " +
+        "Output ONLY the plain text of the prompt with no markdown, no quotes, and no preamble.";
+
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+          contents: [
+            {
+              role: 'user',
+              parts: [{
+                text: `Generate today's fresh self-reflective, nostalgic, and spiritually resonant journal question.${avoidBlock}`
+              }]
+            }
+          ],
+          generationConfig: {
+            temperature: 0.85,
+            maxOutputTokens: 1024
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API returned status ${response.status}`);
+      }
+
+      const data = await response.json();
+      const parts = data?.candidates?.[0]?.content?.parts || [];
+      const rawText = parts
+        .filter(p => !p.thought && typeof p.text === 'string')
+        .map(p => p.text)
+        .join(' ')
+        .replace(/^["'“”]+|["'“”]+$/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!isCompleteQuestion(rawText)) {
+        throw new Error('Generated question did not pass completeness validation.');
+      }
+
+      addQuestionToHistory(rawText);
+      return rawText;
+    }
+
+    /**
+     * 6. LOAD OR GENERATE TODAY'S QUESTION (CACHED UNTIL MIDNIGHT)
+     */
+    async function loadDailyQuestion(forceRefresh = false) {
+      const todayKey = getLocalDateKey();
+      const questionEl = document.getElementById('daily-question');
+      const badgeEl = document.getElementById('prompt-source-badge');
+      const redrawBtn = document.getElementById('redraw-question-btn');
+
+      if (!forceRefresh) {
+        try {
+          const cached = JSON.parse(localStorage.getItem(STORAGE_KEYS.DAILY_CACHE) || 'null');
+          if (cached && cached.date === todayKey && isCompleteQuestion(cached.question)) {
+            renderQuestion(cached.question, cached.source);
+            return;
+          }
+        } catch (e) {
+          console.warn('Cache read error:', e);
+        }
+      }
+
+      questionEl.classList.add('loading');
+      questionEl.textContent = 'Listening inward for today’s question...';
+      redrawBtn.disabled = true;
+
+      const apiKey = (localStorage.getItem(STORAGE_KEYS.API_KEY) || '').trim();
+      const model = localStorage.getItem(STORAGE_KEYS.MODEL) || 'gemini-2.5-flash';
+
+      let question = '';
+      let source = 'anthology';
+
+      if (apiKey) {
+        try {
+          question = await fetchQuestionFromGemini(apiKey, model);
+          source = 'gemini';
+        } catch (err) {
+          console.warn('Falling back to built-in anthology:', err.message);
+          question = pickFallbackQuestion();
+          source = 'anthology';
+        }
+      } else {
+        question = pickFallbackQuestion();
+        source = 'anthology';
+      }
+
+      localStorage.setItem(
+        STORAGE_KEYS.DAILY_CACHE,
+        JSON.stringify({ date: todayKey, question, source })
+      );
+
+      renderQuestion(question, source);
+      saveCurrentEntry();
+      redrawBtn.disabled = false;
+    }
+
+    function renderQuestion(question, source) {
+      const questionEl = document.getElementById('daily-question');
+      const badgeEl = document.getElementById('prompt-source-badge');
+
+      questionEl.classList.remove('loading');
+      questionEl.textContent = question;
+
+      if (source === 'gemini') {
+        badgeEl.textContent = '✨ Gemini Daily Reflection';
+        badgeEl.classList.remove('offline');
+      } else {
+        badgeEl.textContent = '🌿 Contemplative Anthology';
+        badgeEl.classList.add('offline');
+      }
+    }
+
+    /**
+     * 7. DISTRACTION-FREE ENTRY STORAGE & WORD COUNT
+     */
+    function getAllEntries() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEYS.ENTRIES) || '{}');
+      } catch {
+        return {};
+      }
+    }
+
+    function loadTodayEntry() {
+      const todayKey = getLocalDateKey();
+      const entries = getAllEntries();
+      const textarea = document.getElementById('diary-entry');
+      if (entries[todayKey] && typeof entries[todayKey].text === 'string') {
+        textarea.value = entries[todayKey].text;
+      } else {
+        textarea.value = '';
+      }
+      updateWordCount();
+    }
+
+    function saveCurrentEntry() {
+      const todayKey = getLocalDateKey();
+      const textarea = document.getElementById('diary-entry');
+      const question = document.getElementById('daily-question').textContent.trim();
+      const entries = getAllEntries();
+
+      entries[todayKey] = {
+        date: todayKey,
+        question,
+        text: textarea.value,
+        updatedAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(STORAGE_KEYS.ENTRIES, JSON.stringify(entries));
+      const saveIndicator = document.getElementById('save-indicator');
+      saveIndicator.textContent = 'Saved moments ago';
+    }
+
+    function updateWordCount() {
+      const text = document.getElementById('diary-entry').value.trim();
+      const words = text ? text.split(/\s+/).length : 0;
+      document.getElementById('word-count').textContent = `${words} ${words === 1 ? 'word' : 'words'}`;
+    }
+
+    /**
+     * 8. COPY TO CLIPBOARD (DATE + QUESTION + ENTRY)
+     */
+    async function copyTodayReflection() {
+      const todayKey = getLocalDateKey();
+      const readableDate = formatReadableDate(todayKey);
+      const question = document.getElementById('daily-question').textContent.trim();
+      const entry = document.getElementById('diary-entry').value.trim() || '(No reflection written yet)';
+
+      const formatted = `Dear Diary — ${readableDate}\n\nPrompt:\n${question}\n\nReflection:\n${entry}\n`;
+
+      const copyBtn = document.getElementById('copy-entry-btn');
+      const copyLabel = document.getElementById('copy-btn-label');
+
+      try {
+        await navigator.clipboard.writeText(formatted);
+      } catch {
+        // Fallback for older mobile webviews
+        const temp = document.createElement('textarea');
+        temp.value = formatted;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+      }
+
+      copyBtn.classList.add('copied');
+      copyLabel.textContent = 'Copied to Clipboard ✓';
+      setTimeout(() => {
+        copyBtn.classList.remove('copied');
+        copyLabel.textContent = 'Copy Reflection';
+      }, 2200);
+    }
+
+    /**
+     * 9. THEME MANAGEMENT (UPDATES MOBILE STATUS BAR META COLOR)
+     */
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem(STORAGE_KEYS.THEME, theme);
+
+      // Update mobile browser / PWA status bar color dynamically
+      const themeMeta = document.getElementById('theme-color-meta');
+      if (themeMeta) {
+        themeMeta.setAttribute('content', theme === 'dark' ? '#1B1D1A' : '#F6F3EC');
+      }
+    }
+
+    /**
+     * 10. INITIALIZE APP & EVENT LISTENERS
+     */
+    document.addEventListener('DOMContentLoaded', () => {
+      setupMobileHomeScreenIcon();
+
+      const todayKey = getLocalDateKey();
+      document.getElementById('current-date-label').textContent = formatReadableDate(todayKey);
+
+      // Initialize theme
+      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'light';
+      applyTheme(savedTheme);
+
+      // Load today's cached or fresh question and entry
+      loadTodayEntry();
+      loadDailyQuestion(false);
+
+      // Auto-check at midnight if the tab stays open overnight
+      let activeDateKey = todayKey;
+      setInterval(() => {
+        const nowKey = getLocalDateKey();
+        if (nowKey !== activeDateKey) {
+          activeDateKey = nowKey;
+          document.getElementById('current-date-label').textContent = formatReadableDate(nowKey);
+          loadTodayEntry();
+          loadDailyQuestion(false);
+        }
+      }, 30000);
+
+      // Writing input listeners
+      const textarea = document.getElementById('diary-entry');
+      textarea.addEventListener('input', () => {
+        updateWordCount();
+        saveCurrentEntry();
+      });
+
+      // Redraw question button
+      document.getElementById('redraw-question-btn').addEventListener('click', () => {
+        loadDailyQuestion(true);
+      });
+
+      // Copy button
+      document.getElementById('copy-entry-btn').addEventListener('click', copyTodayReflection);
+
+      // Theme toggle button
+      document.getElementById('theme-toggle-btn').addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+      });
+
+      // Settings modal controls
+      const settingsModal = document.getElementById('settings-modal');
+      const apiKeyInput = document.getElementById('api-key-input');
+      const modelSelect = document.getElementById('model-select');
+
+      document.getElementById('open-settings-btn').addEventListener('click', () => {
+        apiKeyInput.value = localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
+        modelSelect.value = localStorage.getItem(STORAGE_KEYS.MODEL) || 'gemini-2.5-flash';
+        settingsModal.classList.add('open');
+      });
+
+      const closeSettings = () => settingsModal.classList.remove('open');
+      document.getElementById('close-settings-btn').addEventListener('click', closeSettings);
+      document.getElementById('cancel-settings-btn').addEventListener('click', closeSettings);
+
+      document.getElementById('save-settings-btn').addEventListener('click', () => {
+        localStorage.setItem(STORAGE_KEYS.API_KEY, apiKeyInput.value.trim());
+        localStorage.setItem(STORAGE_KEYS.MODEL, modelSelect.value);
+        closeSettings();
+        loadDailyQuestion(true);
+      });
+
+      // Archive modal controls
+      const archiveModal = document.getElementById('archive-modal');
+      const archiveList = document.getElementById('archive-list');
+
+      document.getElementById('open-archive-btn').addEventListener('click', () => {
+        const entries = getAllEntries();
+        const sortedKeys = Object.keys(entries).sort().reverse();
+        archiveList.innerHTML = '';
+
+        if (sortedKeys.length === 0) {
+          archiveList.innerHTML = '<p class="form-help">Your past reflections will softly gather here as you write each day.</p>';
+        } else {
+          sortedKeys.forEach(key => {
+            const item = entries[key];
+            if (!item.text && key !== getLocalDateKey()) return;
+            const card = document.createElement('div');
+            card.className = 'archive-item';
+            card.innerHTML = `
+              <span class="archive-item-date">${formatReadableDate(key)}</span>
+              <p class="archive-item-q">${item.question || ''}</p>
+              <p class="archive-item-a">${item.text || '(No entry written)'}</p>
+            `;
+            archiveList.appendChild(card);
+          });
+        }
+        archiveModal.classList.add('open');
+      });
+
+      document.getElementById('close-archive-btn').addEventListener('click', () => {
+        archiveModal.classList.remove('open');
+      });
+
+      document.getElementById('export-all-btn').addEventListener('click', async (e) => {
+        const entries = getAllEntries();
+        const sortedKeys = Object.keys(entries).sort().reverse();
+        const compiled = sortedKeys
+          .map(k => `=== ${formatReadableDate(k)} ===\nPrompt: ${entries[k].question}\n\n${entries[k].text || ''}`)
+          .join('\n\n------------------------------\n\n');
+
+        await navigator.clipboard.writeText(compiled || 'No entries yet.');
+        e.target.textContent = 'Copied All Reflections ✓';
+        setTimeout(() => { e.target.textContent = 'Copy All Entries'; }, 2000);
+      });
+    });
+  </script>
+</body>
+</html>
