@@ -93,7 +93,6 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      /* Respects iPhone notch and home indicator bar when launched full-screen */
       padding-top: max(1.5rem, env(safe-area-inset-top));
       padding-bottom: max(2.5rem, env(safe-area-inset-bottom));
       padding-left: max(1.25rem, env(safe-area-inset-left));
@@ -340,7 +339,7 @@
     }
 
     /* ==========================================================================
-       6. MODALS (SETTINGS & PAST REFLECTIONS ARCHIVE)
+       6. MODALS (SETTINGS, CALENDAR & ARCHIVE)
        ========================================================================== */
     .modal-backdrop {
       position: fixed;
@@ -444,6 +443,87 @@
       cursor: pointer;
     }
 
+    /* Calendar Modal Specifics */
+    .cal-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .cal-month-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.35rem;
+      text-align: center;
+    }
+
+    .cal-weekday {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding-bottom: 0.25rem;
+    }
+
+    .cal-day {
+      aspect-ratio: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--text-primary);
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+
+    .cal-day:hover:not(.empty) {
+      border-color: var(--accent-sage);
+      background: var(--accent-sage-soft);
+    }
+
+    .cal-day.empty {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    .cal-day.today {
+      font-weight: 700;
+      border-color: var(--accent-sage);
+    }
+
+    .cal-day.selected {
+      background: var(--accent-sage);
+      color: #FAF8F3;
+      border-color: var(--accent-sage);
+    }
+
+    .cal-dot {
+      width: 4px;
+      height: 4px;
+      background-color: var(--accent-clay);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 5px;
+    }
+
+    .cal-day.selected .cal-dot {
+      background-color: #FAF8F3;
+    }
+
     .archive-list {
       display: flex;
       flex-direction: column;
@@ -503,6 +583,16 @@
       </div>
 
       <div class="nav-actions">
+        <!-- Calendar View Button -->
+        <button class="icon-btn" id="open-calendar-btn" title="Calendar View" aria-label="Open Calendar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </button>
+
         <!-- Past Reflections Archive Button -->
         <button class="icon-btn" id="open-archive-btn" title="Past Reflections" aria-label="Open Past Reflections">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -573,6 +663,40 @@
   </main>
 
   <!-- ==========================================================================
+       CALENDAR VIEW MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" id="calendar-modal" role="dialog" aria-modal="true" aria-labelledby="calendar-title">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h2 class="modal-title" id="calendar-title">Journal Calendar</h2>
+        <button class="icon-btn" id="close-calendar-btn" aria-label="Close Calendar">✕</button>
+      </div>
+
+      <div class="cal-nav-bar">
+        <button class="icon-btn" id="cal-prev-month" aria-label="Previous Month">‹</button>
+        <span class="cal-month-title" id="cal-month-display">Month Year</span>
+        <button class="icon-btn" id="cal-next-month" aria-label="Next Month">›</button>
+      </div>
+
+      <div class="cal-grid" id="cal-grid-header">
+        <div class="cal-weekday">Su</div>
+        <div class="cal-weekday">Mo</div>
+        <div class="cal-weekday">Tu</div>
+        <div class="cal-weekday">We</div>
+        <div class="cal-weekday">Th</div>
+        <div class="cal-weekday">Fr</div>
+        <div class="cal-weekday">Sa</div>
+      </div>
+
+      <div class="cal-grid" id="cal-grid-days"></div>
+
+      <div class="modal-actions">
+        <button class="secondary-btn" id="jump-today-btn">Jump to Today</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
        SETTINGS MODAL (GEMINI API KEY & MODEL SELECTION)
        ========================================================================== -->
   <div class="modal-backdrop" id="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
@@ -622,13 +746,11 @@
   </div>
 
   <!-- ==========================================================================
-       APPLICATION LOGIC & PWA HOME-SCREEN ICON GENERATOR
+       APPLICATION LOGIC & CALENDAR INTEGRATION
        ========================================================================== -->
   <script>
     /**
      * 1. BUILT-IN CONTEMPLATIVE BACKUP QUESTIONS
-     * Every prompt sets a gentle nostalgic or spiritual context first, followed
-     * by a clear, self-reflective question for the user to answer.
      */
     const BACKUP_QUESTIONS = [
       "Think back to a quiet place from your childhood where time seemed to slow down and you felt completely safe. What sensory details from that sanctuary still linger in your memory, and how can you invite that same stillness into your life today?",
@@ -646,22 +768,24 @@
     ];
 
     /**
-     * 2. LOCAL STORAGE KEYS
+     * 2. LOCAL STORAGE KEYS & ACTIVE DATE STATE
      */
     const STORAGE_KEYS = {
       API_KEY: 'dear_diary_api_key',
       MODEL: 'dear_diary_model',
       THEME: 'dear_diary_theme',
-      DAILY_CACHE: 'dear_diary_daily_cache',     // { date: 'YYYY-MM-DD', question: '...', source: 'gemini'|'anthology' }
-      HISTORY: 'dear_diary_question_history',   // Array of past questions to prevent repeats
-      ENTRIES: 'dear_diary_entries'             // { 'YYYY-MM-DD': { date, question, text, updatedAt } }
+      DAILY_CACHE: 'dear_diary_daily_cache',
+      HISTORY: 'dear_diary_question_history',
+      ENTRIES: 'dear_diary_entries'
     };
 
+    // Tracks which date the user is currently viewing in the sanctuary (defaults to today)
+    let viewingDateKey = getLocalDateKey();
+    let currentCalYear = new Date().getFullYear();
+    let currentCalMonth = new Date().getMonth();
+
     /**
-     * 3. GENERATE HIGH-RES HOME SCREEN ICON & WEB MANIFEST DYNAMICALLY
-     * iOS Safari requires a raster PNG for apple-touch-icon. We draw a peaceful
-     * botanical leaf emblem onto an offscreen canvas at boot so the single HTML file
-     * gives users a crisp home-screen app icon with zero external image dependencies.
+     * 3. GENERATE HIGH-RES HOME SCREEN ICON & WEB MANIFEST
      */
     function setupMobileHomeScreenIcon() {
       try {
@@ -670,16 +794,13 @@
         canvas.height = 512;
         const ctx = canvas.getContext('2d');
 
-        // Warm parchment background
         ctx.fillStyle = '#F6F3EC';
         ctx.fillRect(0, 0, 512, 512);
 
-        // Subtle inner frame
         ctx.strokeStyle = 'rgba(94, 111, 88, 0.3)';
         ctx.lineWidth = 8;
         ctx.strokeRect(44, 44, 424, 424);
 
-        // Botanical stem
         ctx.strokeStyle = '#5E6F58';
         ctx.lineWidth = 16;
         ctx.lineCap = 'round';
@@ -688,7 +809,6 @@
         ctx.quadraticCurveTo(256, 260, 256, 145);
         ctx.stroke();
 
-        // Left sage leaf
         ctx.fillStyle = '#5E6F58';
         ctx.beginPath();
         ctx.moveTo(256, 295);
@@ -696,7 +816,6 @@
         ctx.bezierCurveTo(240, 200, 256, 250, 256, 295);
         ctx.fill();
 
-        // Right terracotta leaf
         ctx.fillStyle = '#B5694B';
         ctx.beginPath();
         ctx.moveTo(256, 240);
@@ -704,7 +823,6 @@
         ctx.bezierCurveTo(272, 145, 256, 195, 256, 240);
         ctx.fill();
 
-        // Sun/spirit dot above stem
         ctx.fillStyle = '#B5694B';
         ctx.beginPath();
         ctx.arc(256, 108, 15, 0, Math.PI * 2);
@@ -713,7 +831,6 @@
         const pngDataUrl = canvas.toDataURL('image/png');
         document.getElementById('apple-touch-icon-link').href = pngDataUrl;
 
-        // Create inline Web App Manifest for Android Chrome "Install App"
         const manifest = {
           name: 'Dear Diary — Daily Contemplative Journal',
           short_name: 'Dear Diary',
@@ -722,9 +839,7 @@
           display: 'standalone',
           background_color: '#F6F3EC',
           theme_color: '#F6F3EC',
-          icons: [
-            { src: pngDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
-          ]
+          icons: [{ src: pngDataUrl, sizes: '512x512', type: 'image/png', purpose: 'any maskable' }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
         document.getElementById('manifest-link').href = URL.createObjectURL(manifestBlob);
@@ -736,11 +851,10 @@
     /**
      * 4. DATE & COMPLETENESS HELPERS
      */
-    function getLocalDateKey() {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = String(now.getMonth() + 1).padStart(2, '0');
-      const day = String(now.getDate()).padStart(2, '0');
+    function getLocalDateKey(dateObj = new Date()) {
+      const year = dateObj.getFullYear();
+      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const day = String(dateObj.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
 
@@ -755,7 +869,6 @@
       });
     }
 
-    // Verifies that a question is complete, reflective, and ends with a question mark
     function isCompleteQuestion(text) {
       if (!text || typeof text !== 'string') return false;
       const cleaned = text.trim();
@@ -814,9 +927,7 @@
           contents: [
             {
               role: 'user',
-              parts: [{
-                text: `Generate today's fresh self-reflective, nostalgic, and spiritually resonant journal question.${avoidBlock}`
-              }]
+              parts: [{ text: `Generate a fresh self-reflective, nostalgic, and spiritually resonant journal question.${avoidBlock}` }]
             }
           ],
           generationConfig: {
@@ -849,29 +960,44 @@
     }
 
     /**
-     * 6. LOAD OR GENERATE TODAY'S QUESTION (CACHED UNTIL MIDNIGHT)
+     * 6. LOAD QUESTION & ENTRY FOR ANY SELECTED DATE
      */
-    async function loadDailyQuestion(forceRefresh = false) {
-      const todayKey = getLocalDateKey();
+    async function loadDateSanctuary(dateKey, forceRefresh = false) {
+      viewingDateKey = dateKey;
+      document.getElementById('current-date-label').textContent = formatReadableDate(dateKey);
+
       const questionEl = document.getElementById('daily-question');
       const badgeEl = document.getElementById('prompt-source-badge');
-      const redrawBtn = document.getElementById('redraw-question-btn');
+      const textarea = document.getElementById('diary-entry');
 
-      if (!forceRefresh) {
+      const entries = getAllEntries();
+      const existingEntry = entries[dateKey] || {};
+
+      // Load existing question for this date if present
+      if (!forceRefresh && existingEntry.question && isCompleteQuestion(existingEntry.question)) {
+        renderQuestion(existingEntry.question, existingEntry.source || 'anthology');
+        textarea.value = existingEntry.text || '';
+        updateWordCount();
+        return;
+      }
+
+      // If today and cached, load daily cache
+      const todayKey = getLocalDateKey();
+      if (!forceRefresh && dateKey === todayKey) {
         try {
           const cached = JSON.parse(localStorage.getItem(STORAGE_KEYS.DAILY_CACHE) || 'null');
           if (cached && cached.date === todayKey && isCompleteQuestion(cached.question)) {
             renderQuestion(cached.question, cached.source);
+            textarea.value = existingEntry.text || '';
+            updateWordCount();
             return;
           }
-        } catch (e) {
-          console.warn('Cache read error:', e);
-        }
+        } catch (e) {}
       }
 
+      // Otherwise generate or pick question for this date
       questionEl.classList.add('loading');
-      questionEl.textContent = 'Listening inward for today’s question...';
-      redrawBtn.disabled = true;
+      questionEl.textContent = 'Gathering reflection for this day...';
 
       const apiKey = (localStorage.getItem(STORAGE_KEYS.API_KEY) || '').trim();
       const model = localStorage.getItem(STORAGE_KEYS.MODEL) || 'gemini-2.5-flash';
@@ -879,12 +1005,11 @@
       let question = '';
       let source = 'anthology';
 
-      if (apiKey) {
+      if (apiKey && dateKey === todayKey) {
         try {
           question = await fetchQuestionFromGemini(apiKey, model);
           source = 'gemini';
         } catch (err) {
-          console.warn('Falling back to built-in anthology:', err.message);
           question = pickFallbackQuestion();
           source = 'anthology';
         }
@@ -893,14 +1018,14 @@
         source = 'anthology';
       }
 
-      localStorage.setItem(
-        STORAGE_KEYS.DAILY_CACHE,
-        JSON.stringify({ date: todayKey, question, source })
-      );
+      if (dateKey === todayKey) {
+        localStorage.setItem(STORAGE_KEYS.DAILY_CACHE, JSON.stringify({ date: todayKey, question, source }));
+      }
 
       renderQuestion(question, source);
+      textarea.value = existingEntry.text || '';
+      updateWordCount();
       saveCurrentEntry();
-      redrawBtn.disabled = false;
     }
 
     function renderQuestion(question, source) {
@@ -911,7 +1036,7 @@
       questionEl.textContent = question;
 
       if (source === 'gemini') {
-        badgeEl.textContent = '✨ Gemini Daily Reflection';
+        badgeEl.textContent = '✨ Gemini Reflection';
         badgeEl.classList.remove('offline');
       } else {
         badgeEl.textContent = '🌿 Contemplative Anthology';
@@ -920,7 +1045,7 @@
     }
 
     /**
-     * 7. DISTRACTION-FREE ENTRY STORAGE & WORD COUNT
+     * 7. ENTRY STORAGE & WORD COUNT
      */
     function getAllEntries() {
       try {
@@ -930,27 +1055,17 @@
       }
     }
 
-    function loadTodayEntry() {
-      const todayKey = getLocalDateKey();
-      const entries = getAllEntries();
-      const textarea = document.getElementById('diary-entry');
-      if (entries[todayKey] && typeof entries[todayKey].text === 'string') {
-        textarea.value = entries[todayKey].text;
-      } else {
-        textarea.value = '';
-      }
-      updateWordCount();
-    }
-
     function saveCurrentEntry() {
-      const todayKey = getLocalDateKey();
       const textarea = document.getElementById('diary-entry');
       const question = document.getElementById('daily-question').textContent.trim();
+      const badgeEl = document.getElementById('prompt-source-badge');
+      const source = badgeEl.classList.contains('offline') ? 'anthology' : 'gemini';
       const entries = getAllEntries();
 
-      entries[todayKey] = {
-        date: todayKey,
+      entries[viewingDateKey] = {
+        date: viewingDateKey,
         question,
+        source,
         text: textarea.value,
         updatedAt: new Date().toISOString()
       };
@@ -967,11 +1082,10 @@
     }
 
     /**
-     * 8. COPY TO CLIPBOARD (DATE + QUESTION + ENTRY)
+     * 8. COPY REFLECTION TO CLIPBOARD
      */
-    async function copyTodayReflection() {
-      const todayKey = getLocalDateKey();
-      const readableDate = formatReadableDate(todayKey);
+    async function copyActiveReflection() {
+      const readableDate = formatReadableDate(viewingDateKey);
       const question = document.getElementById('daily-question').textContent.trim();
       const entry = document.getElementById('diary-entry').value.trim() || '(No reflection written yet)';
 
@@ -983,7 +1097,6 @@
       try {
         await navigator.clipboard.writeText(formatted);
       } catch {
-        // Fallback for older mobile webviews
         const temp = document.createElement('textarea');
         temp.value = formatted;
         document.body.appendChild(temp);
@@ -1001,13 +1114,62 @@
     }
 
     /**
-     * 9. THEME MANAGEMENT (UPDATES MOBILE STATUS BAR META COLOR)
+     * 9. CALENDAR RENDERING & INTERACTION
+     */
+    function renderCalendar(year, month) {
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById('cal-month-display').textContent = `${monthNames[month]} ${year}`;
+
+      const gridDays = document.getElementById('cal-days'); // Will replace with cal-grid-days
+      const container = document.getElementById('cal-grid-days');
+      container.innerHTML = '';
+
+      const firstDayIndex = new Date(year, month, 1).getDay();
+      const totalDays = new Date(year, month + 1, 0).getDate();
+      const todayKey = getLocalDateKey();
+      const entries = getAllEntries();
+
+      // Empty padding slots for days before the 1st of the month
+      for (let i = 0; i < firstDayIndex; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'cal-day empty';
+        container.appendChild(emptyCell);
+      }
+
+      // Render days of the month
+      for (let day = 1; day <= totalDays; day++) {
+        const dateObj = new Date(year, month, day);
+        const dateKey = getLocalDateKey(dateObj);
+        const cell = document.createElement('div');
+        cell.className = 'cal-day';
+        if (dateKey === todayKey) cell.classList.add('today');
+        if (dateKey === viewingDateKey) cell.classList.add('selected');
+
+        cell.textContent = day;
+
+        // Check if entry exists and has text
+        if (entries[dateKey] && entries[dateKey].text && entries[dateKey].text.trim().length > 0) {
+          const dot = document.createElement('div');
+          dot.className = 'cal-dot';
+          cell.appendChild(dot);
+        }
+
+        cell.addEventListener('click', () => {
+          loadDateSanctuary(dateKey);
+          document.getElementById('calendar-modal').classList.remove('open');
+        });
+
+        container.appendChild(cell);
+      }
+    }
+
+    /**
+     * 10. THEME MANAGEMENT
      */
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       localStorage.setItem(STORAGE_KEYS.THEME, theme);
 
-      // Update mobile browser / PWA status bar color dynamically
       const themeMeta = document.getElementById('theme-color-meta');
       if (themeMeta) {
         themeMeta.setAttribute('content', theme === 'dark' ? '#1B1D1A' : '#F6F3EC');
@@ -1015,35 +1177,18 @@
     }
 
     /**
-     * 10. INITIALIZE APP & EVENT LISTENERS
+     * 11. INITIALIZATION & EVENT LISTENERS
      */
     document.addEventListener('DOMContentLoaded', () => {
       setupMobileHomeScreenIcon();
 
       const todayKey = getLocalDateKey();
-      document.getElementById('current-date-label').textContent = formatReadableDate(todayKey);
+      applyTheme(localStorage.getItem(STORAGE_KEYS.THEME) || 'light');
 
-      // Initialize theme
-      const savedTheme = localStorage.getItem(STORAGE_KEYS.THEME) || 'light';
-      applyTheme(savedTheme);
+      // Load today's sanctuary on boot
+      loadDateSanctuary(todayKey, false);
 
-      // Load today's cached or fresh question and entry
-      loadTodayEntry();
-      loadDailyQuestion(false);
-
-      // Auto-check at midnight if the tab stays open overnight
-      let activeDateKey = todayKey;
-      setInterval(() => {
-        const nowKey = getLocalDateKey();
-        if (nowKey !== activeDateKey) {
-          activeDateKey = nowKey;
-          document.getElementById('current-date-label').textContent = formatReadableDate(nowKey);
-          loadTodayEntry();
-          loadDailyQuestion(false);
-        }
-      }, 30000);
-
-      // Writing input listeners
+      // Writing listeners
       const textarea = document.getElementById('diary-entry');
       textarea.addEventListener('input', () => {
         updateWordCount();
@@ -1052,19 +1197,50 @@
 
       // Redraw question button
       document.getElementById('redraw-question-btn').addEventListener('click', () => {
-        loadDailyQuestion(true);
+        loadDateSanctuary(viewingDateKey, true);
       });
 
       // Copy button
-      document.getElementById('copy-entry-btn').addEventListener('click', copyTodayReflection);
+      document.getElementById('copy-entry-btn').addEventListener('click', copyActiveReflection);
 
-      // Theme toggle button
+      // Theme toggle
       document.getElementById('theme-toggle-btn').addEventListener('click', () => {
         const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
         applyTheme(current === 'dark' ? 'light' : 'dark');
       });
 
-      // Settings modal controls
+      // Calendar Modal Controls
+      const calendarModal = document.getElementById('calendar-modal');
+      document.getElementById('open-calendar-btn').addEventListener('click', () => {
+        const [y, m] = viewingDateKey.split('-').map(Number);
+        currentCalYear = y;
+        currentCalMonth = m - 1;
+        renderCalendar(currentCalYear, currentCalMonth);
+        calendarModal.classList.add('open');
+      });
+
+      document.getElementById('close-calendar-btn').addEventListener('click', () => {
+        calendarModal.classList.remove('open');
+      });
+
+      document.getElementById('cal-prev-month').addEventListener('click', () => {
+        currentCalMonth--;
+        if (currentCalMonth < 0) { currentCalMonth = 11; currentCalYear--; }
+        renderCalendar(currentCalYear, currentCalMonth);
+      });
+
+      document.getElementById('cal-next-month').addEventListener('click', () => {
+        currentCalMonth++;
+        if (currentCalMonth > 11) { currentCalMonth = 0; currentCalYear++; }
+        renderCalendar(currentCalYear, currentCalMonth);
+      });
+
+      document.getElementById('jump-today-btn').addEventListener('click', () => {
+        loadDateSanctuary(getLocalDateKey());
+        calendarModal.classList.remove('open');
+      });
+
+      // Settings Modal Controls
       const settingsModal = document.getElementById('settings-modal');
       const apiKeyInput = document.getElementById('api-key-input');
       const modelSelect = document.getElementById('model-select');
@@ -1083,10 +1259,10 @@
         localStorage.setItem(STORAGE_KEYS.API_KEY, apiKeyInput.value.trim());
         localStorage.setItem(STORAGE_KEYS.MODEL, modelSelect.value);
         closeSettings();
-        loadDailyQuestion(true);
+        loadDateSanctuary(viewingDateKey, true);
       });
 
-      // Archive modal controls
+      // Archive Modal Controls
       const archiveModal = document.getElementById('archive-modal');
       const archiveList = document.getElementById('archive-list');
 
@@ -1100,13 +1276,13 @@
         } else {
           sortedKeys.forEach(key => {
             const item = entries[key];
-            if (!item.text && key !== getLocalDateKey()) return;
+            if (!item.text) return;
             const card = document.createElement('div');
             card.className = 'archive-item';
             card.innerHTML = `
               <span class="archive-item-date">${formatReadableDate(key)}</span>
               <p class="archive-item-q">${item.question || ''}</p>
-              <p class="archive-item-a">${item.text || '(No entry written)'}</p>
+              <p class="archive-item-a">${item.text}</p>
             `;
             archiveList.appendChild(card);
           });
@@ -1122,7 +1298,8 @@
         const entries = getAllEntries();
         const sortedKeys = Object.keys(entries).sort().reverse();
         const compiled = sortedKeys
-          .map(k => `=== ${formatReadableDate(k)} ===\nPrompt: ${entries[k].question}\n\n${entries[k].text || ''}`)
+          .filter(k => entries[k].text)
+          .map(k => `=== ${formatReadableDate(k)} ===\nPrompt: ${entries[k].question}\n\n${entries[k].text}`)
           .join('\n\n------------------------------\n\n');
 
         await navigator.clipboard.writeText(compiled || 'No entries yet.');
