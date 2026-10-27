@@ -19,27 +19,27 @@
   <link id="apple-touch-icon-link" rel="apple-touch-icon" href="" />
   <link id="manifest-link" rel="manifest" href="" />
 
-  <!-- Gentle Typography: Cormorant Garamond & Plus Jakarta Sans -->
+  <!-- Gentle Typography: Cormorant Garamond (Reflective Serif) & Plus Jakarta Sans (Clean UI) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
   <style>
     /* ==========================================================================
-       1. EARTHY COLOR PALETTE & THEME VARIABLES
+       1. EARTHY PALETTE & DYNAMIC THEME SYSTEM
        ========================================================================== */
     :root {
-      --bg-primary: #F6F3EC;
-      --bg-card: #EFECE4;
-      --bg-elevated: #FAF8F3;
-      --text-primary: #2B2925;
-      --text-secondary: #68635A;
-      --text-muted: #968F83;
-      --accent-sage: #5E6F58;
-      --accent-sage-hover: #4C5B47;
+      --bg-primary: #F6F3EC;         /* Warm Parchment */
+      --bg-card: #EFECE4;            /* Soft Linen */
+      --bg-elevated: #FAF8F3;        /* Pure Ivory Paper */
+      --text-primary: #2B2925;       /* Deep Loam */
+      --text-secondary: #68635A;     /* Muted Driftwood */
+      --text-muted: #968F83;         /* Warm Stone */
+      --accent-sage: #5E6F58;        /* Moss Sage */
+      --accent-sage-hover: #4C5B47;  /* Deep Forest Sage */
       --accent-sage-soft: rgba(94, 111, 88, 0.12);
-      --accent-clay: #B5694B;
-      --accent-clay-hover: #9E563B;
+      --accent-clay: #B5694B;        /* Terracotta Clay */
+      --accent-clay-hover: #9E563B;  /* Deep Terracotta */
       --accent-clay-soft: rgba(181, 105, 75, 0.12);
       --border-subtle: rgba(43, 41, 37, 0.1);
       --shadow-soft: 0 12px 36px -8px rgba(43, 41, 37, 0.06);
@@ -49,23 +49,29 @@
     }
 
     [data-theme="dark"] {
-      --bg-primary: #1B1D1A;
-      --bg-card: #242723;
-      --bg-elevated: #212420;
-      --text-primary: #E8E4DA;
-      --text-secondary: #A7A297;
-      --text-muted: #726E65;
-      --accent-sage: #8DA285;
-      --accent-sage-hover: #A2B69A;
+      --bg-primary: #1B1D1A;         /* Midnight Moss */
+      --bg-card: #242723;            /* Deep Lichen */
+      --bg-elevated: #212420;        /* Quiet Slate */
+      --text-primary: #E8E4DA;       /* Soft Bone */
+      --text-secondary: #A7A297;     /* Warm Ash */
+      --text-muted: #726E65;         /* Dim Lichen */
+      --accent-sage: #8DA285;        /* Moonlit Sage */
+      --accent-sage-hover: #A2B69A;  /* Pale Sage */
       --accent-sage-soft: rgba(141, 162, 133, 0.15);
-      --accent-clay: #D48C6F;
-      --accent-clay-hover: #BF785C;
+      --accent-clay: #D48C6F;        /* Warm Ochre */
+      --accent-clay-hover: #BF785C;  /* Terracotta Glow */
       --accent-clay-soft: rgba(212, 140, 111, 0.15);
       --border-subtle: rgba(232, 228, 218, 0.1);
       --shadow-soft: 0 14px 40px -8px rgba(0, 0, 0, 0.35);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     html, body {
       min-height: 100%;
       background-color: var(--bg-primary);
@@ -100,6 +106,9 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* ==========================================================================
+       2. HEADER & NAVIGATION
+       ========================================================================== */
     header {
       display: flex;
       justify-content: space-between;
@@ -110,7 +119,11 @@
       gap: 0.75rem;
     }
 
-    .brand { display: flex; flex-direction: column; }
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
     .brand-title {
       font-family: var(--font-serif);
       font-size: 2.15rem;
@@ -129,7 +142,12 @@
       margin-top: 0.25rem;
     }
 
-    .nav-actions { display: flex; align-items: center; gap: 0.45rem; flex-wrap: wrap; }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+    }
 
     .icon-btn {
       background: transparent;
@@ -158,16 +176,16 @@
       border-color: var(--accent-sage);
     }
 
-    /* Prompt Card */
+    /* ==========================================================================
+       3. DAILY CONTEMPLATIVE PROMPT CARD
+       ========================================================================== */
     .prompt-card {
       background-color: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: 20px;
-      padding: 1.65rem 1.65rem 1.4rem;
+      padding: 1.65rem 1.65rem 1.45rem;
       box-shadow: var(--shadow-soft);
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      position: relative;
       transition: background-color var(--transition-slow);
     }
 
@@ -175,7 +193,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
+      margin-bottom: 0.85rem;
+      gap: 0.6rem;
       flex-wrap: wrap;
     }
 
@@ -186,19 +205,18 @@
       text-transform: uppercase;
       color: var(--accent-sage);
       background: var(--accent-sage-soft);
-      padding: 0.28rem 0.75rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
-    .prompt-badge.gemini {
-      color: var(--accent-clay);
-      background: var(--accent-clay-soft);
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
     }
-
-    .btn-group { display: flex; align-items: center; gap: 0.45rem; }
 
     .action-pill-btn {
       background: transparent;
@@ -206,8 +224,8 @@
       color: var(--text-primary);
       font-family: var(--font-sans);
       font-size: 0.76rem;
-      font-weight: 600;
-      padding: 0.35rem 0.85rem;
+      font-weight: 500;
+      padding: 0.32rem 0.8rem;
       border-radius: 999px;
       cursor: pointer;
       display: inline-flex;
@@ -222,58 +240,56 @@
       background: var(--accent-sage-soft);
     }
 
-    .action-pill-btn.gemini {
-      color: var(--accent-clay);
-      border-color: var(--accent-clay);
-    }
-
-    .action-pill-btn.gemini:hover:not(:disabled) {
-      background: var(--accent-clay-soft);
+    .action-pill-btn:disabled {
+      opacity: 0.5;
+      cursor: wait;
     }
 
     .question-text {
       font-family: var(--font-serif);
-      font-size: clamp(1.3rem, 3.8vw, 1.65rem);
+      font-size: clamp(1.3rem, 3.6vw, 1.65rem);
       font-weight: 500;
-      line-height: 1.5;
+      line-height: 1.48;
       color: var(--text-primary);
-      min-height: 3.5rem;
-      transition: opacity 0.25s ease;
+      transition: opacity 0.3s ease;
+      min-height: 3.2rem;
     }
 
     .question-text.loading {
-      opacity: 0.4;
+      opacity: 0.45;
       font-style: italic;
     }
 
-    /* Writing Sanctuary */
+    /* ==========================================================================
+       4. DISTRACTION-FREE WRITING SANCTUARY
+       ========================================================================== */
     .writing-sanctuary {
       background-color: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
       border-radius: 20px;
-      padding: 1.5rem 1.65rem;
+      padding: 1.4rem 1.6rem;
       box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 0.95rem;
       transition: background-color var(--transition-slow);
     }
 
-    /* Controls Header: Mood on left, Voice dictation on right */
     .sanctuary-controls-bar {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
       gap: 0.75rem;
-      padding-bottom: 0.75rem;
-      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.65rem;
+      border-bottom: 1px dashed var(--border-subtle);
     }
 
+    /* Mood Resonance Chips */
     .mood-section {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
       flex-wrap: wrap;
     }
 
@@ -281,101 +297,101 @@
       font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-secondary);
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-right: 0.2rem;
     }
 
-    .mood-options { display: flex; align-items: center; gap: 0.35rem; flex-wrap: wrap; }
+    .mood-options {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      flex-wrap: wrap;
+    }
 
     .mood-chip {
-      background: rgba(43, 41, 37, 0.05);
-      border: 1px solid transparent;
+      background: transparent;
+      border: 1px solid var(--border-subtle);
       color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 0.2rem 0.55rem;
       border-radius: 999px;
-      padding: 0.25rem 0.65rem;
-      font-size: 0.75rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.25rem;
       transition: all 0.2s ease;
     }
 
-    [data-theme="dark"] .mood-chip { background: rgba(232, 228, 218, 0.06); }
+    .mood-chip:hover {
+      border-color: var(--accent-sage);
+      color: var(--accent-sage);
+    }
 
-    .mood-chip:hover { background: var(--accent-sage-soft); }
     .mood-chip.active {
       background: var(--accent-sage);
       color: #FAF8F3;
+      border-color: var(--accent-sage);
       font-weight: 600;
     }
 
-    /* Voice Dictation Bar */
+    /* Voice Dictation Controls */
     .voice-control-group {
       display: flex;
       align-items: center;
-      gap: 0.45rem;
+      gap: 0.4rem;
     }
 
     .voice-lang-select {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       color: var(--text-secondary);
-      border-radius: 999px;
-      padding: 0.25rem 0.65rem;
-      font-size: 0.74rem;
-      font-weight: 600;
       font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 500;
+      padding: 0.28rem 0.55rem;
+      border-radius: 8px;
       outline: none;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s ease;
     }
 
-    .voice-lang-select:hover {
+    .voice-lang-select:focus {
       border-color: var(--accent-sage);
-      color: var(--text-primary);
     }
 
-    /* Dictation Microphone Button */
     .mic-btn {
       background: transparent;
       border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      padding: 0.3rem 0.75rem;
-      border-radius: 999px;
+      color: var(--text-primary);
       font-family: var(--font-sans);
       font-size: 0.76rem;
       font-weight: 600;
+      padding: 0.32rem 0.75rem;
+      border-radius: 999px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 0.4rem;
-      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      transition: all 0.25s ease;
       position: relative;
     }
 
     .mic-btn:hover:not(:disabled) {
-      background: var(--accent-sage-soft);
-      color: var(--accent-sage);
-      border-color: var(--accent-sage);
-      transform: translateY(-1px);
-    }
-
-    .mic-btn:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    /* Gentle pulsing listening state */
-    .mic-btn.listening {
-      background: var(--accent-clay-soft);
       border-color: var(--accent-clay);
       color: var(--accent-clay);
-      box-shadow: 0 0 0 0 rgba(181, 105, 75, 0.4);
-      animation: micPulse 1.8s infinite;
+      background: var(--accent-clay-soft);
     }
 
-    @keyframes micPulse {
+    .mic-btn.listening {
+      background: var(--accent-clay);
+      color: #FAF8F3;
+      border-color: var(--accent-clay);
+      animation: pulseListening 1.8s infinite;
+    }
+
+    @keyframes pulseListening {
       0% {
         box-shadow: 0 0 0 0 rgba(181, 105, 75, 0.45);
       }
@@ -467,8 +483,14 @@
       box-shadow: 0 4px 14px rgba(94, 111, 88, 0.25);
     }
 
-    .primary-btn:hover { background-color: var(--accent-sage-hover); transform: translateY(-1px); }
-    .primary-btn.copied { background-color: var(--accent-clay); }
+    .primary-btn:hover {
+      background-color: var(--accent-sage-hover);
+      transform: translateY(-1px);
+    }
+
+    .primary-btn.copied {
+      background-color: var(--accent-clay);
+    }
 
     .share-btn {
       background: transparent;
@@ -532,7 +554,10 @@
       transition: opacity 0.25s ease;
     }
 
-    .modal-backdrop.open { opacity: 1; pointer-events: auto; }
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
     .modal-sheet {
       background: var(--bg-primary);
@@ -561,10 +586,32 @@
       font-weight: 600;
     }
 
-    .cal-nav-bar { display: flex; justify-content: space-between; align-items: center; }
-    .cal-month-title { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.35rem; text-align: center; }
-    .cal-weekday { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; padding-bottom: 0.25rem; }
+    .cal-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cal-month-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.35rem;
+      text-align: center;
+    }
+
+    .cal-weekday {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      padding-bottom: 0.25rem;
+    }
 
     .cal-day {
       aspect-ratio: 1;
@@ -581,14 +628,47 @@
       position: relative;
     }
 
-    .cal-day:hover:not(.empty) { border-color: var(--accent-sage); background: var(--accent-sage-soft); }
-    .cal-day.empty { background: transparent; border: none; cursor: default; }
-    .cal-day.today { font-weight: 700; border-color: var(--accent-sage); }
-    .cal-day.selected { background: var(--accent-sage); color: #FAF8F3; border-color: var(--accent-sage); }
-    .cal-dot { width: 5px; height: 5px; background-color: var(--accent-clay); border-radius: 50%; position: absolute; bottom: 4px; }
-    .cal-day.selected .cal-dot { background-color: #FAF8F3; }
+    .cal-day:hover:not(.empty) {
+      border-color: var(--accent-sage);
+      background: var(--accent-sage-soft);
+    }
 
-    .archive-list { display: flex; flex-direction: column; gap: 0.85rem; }
+    .cal-day.empty {
+      background: transparent;
+      border: none;
+      cursor: default;
+    }
+
+    .cal-day.today {
+      font-weight: 700;
+      border-color: var(--accent-sage);
+    }
+
+    .cal-day.selected {
+      background: var(--accent-sage);
+      color: #FAF8F3;
+      border-color: var(--accent-sage);
+    }
+
+    .cal-dot {
+      width: 5px;
+      height: 5px;
+      background-color: var(--accent-clay);
+      border-radius: 50%;
+      position: absolute;
+      bottom: 4px;
+    }
+
+    .cal-day.selected .cal-dot {
+      background-color: #FAF8F3;
+    }
+
+    .archive-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
     .archive-item {
       background: var(--bg-card);
       border: 1px solid var(--border-subtle);
@@ -599,13 +679,39 @@
       gap: 0.4rem;
     }
 
-    .archive-date { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent-sage); font-weight: 600; }
-    .archive-q { font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; }
-    .archive-a { font-size: 0.9rem; color: var(--text-secondary); white-space: pre-wrap; }
+    .archive-date {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--accent-sage);
+      font-weight: 600;
+    }
 
-    .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
-    .form-group label { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); }
-    .form-group input, .form-group select {
+    .archive-q {
+      font-family: var(--font-serif);
+      font-style: italic;
+      font-size: 1.05rem;
+    }
+
+    .archive-a {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+
+    .form-group label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .form-group select {
       width: 100%;
       padding: 0.7rem 0.9rem;
       border-radius: 12px;
@@ -617,7 +723,32 @@
       outline: none;
     }
 
-    .form-help { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; }
+    .form-help {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Friendly Sanctuary Privacy Note Card in Settings */
+    .sanctuary-note-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .note-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--accent-sage);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
 
     @media (max-width: 520px) {
       .prompt-card { padding: 1.35rem 1.25rem; }
@@ -637,11 +768,11 @@
     <header>
       <div class="brand">
         <h1 class="brand-title">Dear Diary</h1>
-        <span class="brand-date" id="current-date-label">Loading today...</span>
+        <span class="brand-date" id="current-date-label">Loading today's reflection...</span>
       </div>
 
       <div class="nav-actions">
-        <!-- Ambient Audio Sanctuary -->
+        <!-- Ambient Audio Sanctuary (Synthesized Soft Rain) -->
         <button class="icon-btn" id="ambient-audio-btn" title="Toggle Calm Ambient Rain" aria-label="Toggle Ambient Audio">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -667,14 +798,14 @@
         </button>
 
         <!-- Theme Toggle -->
-        <button class="icon-btn" id="theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+        <button class="icon-btn" id="theme-toggle-btn" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
           <svg id="theme-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
           </svg>
         </button>
 
         <!-- Settings Button -->
-        <button class="icon-btn" id="open-settings-btn" title="Sanctuary Settings" aria-label="Open Settings">
+        <button class="icon-btn" id="open-settings-btn" title="Sanctuary Settings & Voice" aria-label="Open Settings">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/>
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -686,16 +817,11 @@
     <!-- Daily Contemplative Question Card -->
     <section class="prompt-card" aria-live="polite">
       <div class="prompt-header">
-        <span class="prompt-badge" id="prompt-source-badge">Daily Inquiry</span>
+        <span class="prompt-badge" id="prompt-source-badge">🌿 Daily Reflection</span>
 
         <div class="btn-group">
-          <!-- Optional Gemini Generate (Shown only when user enters custom key) -->
-          <button class="action-pill-btn gemini" id="gemini-ask-btn" style="display: none;" title="Generate AI question with your Gemini API key">
-            ✨ Ask Gemini
-          </button>
-
-          <!-- Draw Another Question (Picks random question from online list) -->
-          <button class="action-pill-btn" id="redraw-question-btn" title="Draw a random question from the list">
+          <!-- Draw Another Question (Picks random question from online questions list) -->
+          <button class="action-pill-btn" id="redraw-question-btn" title="Draw another question from the list">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
               <path d="M3 3v5h5"/>
@@ -714,7 +840,7 @@
 
     <!-- Distraction-Free Writing Sanctuary -->
     <section class="writing-sanctuary">
-      <!-- Controls Bar: Resonance on left, Voice Dictation & Language next to mic on right -->
+      <!-- Controls Bar: Mood Resonance on left, Voice Dictation & Language next to mic on right -->
       <div class="sanctuary-controls-bar">
         <!-- Mood Selector -->
         <div class="mood-section">
@@ -848,25 +974,21 @@
         </p>
       </div>
 
-      <div class="form-group">
-        <label for="api-key-input">Optional Gemini API Key (Stored Locally)</label>
-        <input type="password" id="api-key-input" placeholder="AIzaSy... (Leave empty to use online gist questions)" autocomplete="off" />
+      <!-- Peaceful Privacy & Sanctuary Information Card -->
+      <div class="sanctuary-note-card">
+        <div class="note-title">
+          <span>🌿</span>
+          <span>A Peaceful, Private Sanctuary</span>
+        </div>
         <p class="form-help">
-          Dear Diary loads its primary 274 contemplative questions from your online gist. If you enter an API key here, an optional <strong>✨ Ask Gemini</strong> button will unlock to generate custom AI prompts.
+          Dear Diary is a distraction-free space for quiet contemplation and daily self-reflection.
+          Every morning, a fresh question is thoughtfully drawn from your online questions collection.
+          Your journal entries, voice recordings, and thoughts never leave this browser—they remain completely private and stored solely on your device.
         </p>
       </div>
 
-      <div class="form-group">
-        <label for="model-select">Gemini Model</label>
-        <select id="model-select">
-          <option value="gemini-3.8-flash">Gemini 3.8 Flash (Fast & Poetic)</option>
-          <option value="gemini-3.8-pro">Gemini 3.8 Pro (Deep Reflection)</option>
-        </select>
-      </div>
-
       <div style="display:flex; justify-content:flex-end; gap:0.5rem; margin-top:0.5rem;">
-        <button class="action-pill-btn" id="cancel-settings-btn">Cancel</button>
-        <button class="primary-btn" id="save-settings-btn">Save Settings</button>
+        <button class="primary-btn" id="save-settings-btn">Close</button>
       </div>
     </div>
   </div>
@@ -896,8 +1018,6 @@
 
     // 3. STORAGE KEYS & APP STATE
     const STORAGE_KEYS = {
-      API_KEY: 'dear_diary_api_key',
-      MODEL: 'dear_diary_model',
       THEME: 'dear_diary_theme',
       ENTRIES: 'dear_diary_entries',
       ONLINE_QUESTIONS: 'dear_diary_online_questions',
@@ -921,7 +1041,17 @@
     let activeVoiceLang = localStorage.getItem(STORAGE_KEYS.VOICE_LANG) || 'en-IN';
     let restartTimeout = null;
 
-    // 4. DATE & DAY-OF-YEAR HELPERS
+    // 4. CLEANUP OLD GEMINI DATA FROM LOCAL STORAGE ON BOOT
+    function cleanupOldGeminiKeys() {
+      try {
+        localStorage.removeItem('dear_diary_api_key');
+        localStorage.removeItem('dear_diary_model');
+      } catch (e) {
+        console.warn('Storage cleanup notice:', e);
+      }
+    }
+
+    // 5. DATE & DAY-OF-YEAR HELPERS
     function getLocalDateKey(dateObj = new Date()) {
       const year = dateObj.getFullYear();
       const month = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -951,7 +1081,7 @@
       return Math.floor(diff / oneDay) + 1;
     }
 
-    // 5. FETCH & CACHE ONLINE QUESTIONS GIST
+    // 6. FETCH & CACHE ONLINE QUESTIONS GIST
     async function loadOnlineQuestionsList() {
       const todayKey = getLocalDateKey();
       const cacheBustedUrl = `${QUESTIONS_URL}?t=${encodeURIComponent(todayKey)}`;
@@ -989,7 +1119,7 @@
       }
     }
 
-    // 6. QUESTION ROTATION & SCHEDULING
+    // 7. QUESTION ROTATION & SCHEDULING
     function getTodayScheduledQuestion(dateKey = getLocalDateKey()) {
       const pool = (questionsList && questionsList.length > 0) ? questionsList : BACKUP_QUESTIONS;
       const [y, m, d] = dateKey.split('-').map(Number);
@@ -1009,7 +1139,7 @@
       return targetPool[Math.floor(Math.random() * targetPool.length)];
     }
 
-    // 7. LOAD SANCTUARY FOR A GIVEN DATE
+    // 8. LOAD SANCTUARY FOR A GIVEN DATE
     function loadDateSanctuary(dateKey, forceNewRandom = false) {
       viewingDateKey = dateKey;
       document.getElementById('current-date-label').textContent = formatReadableDate(dateKey);
@@ -1032,7 +1162,7 @@
 
       // If already written or scheduled for this date, load it
       if (existing.question && existing.question.trim().length > 0) {
-        renderQuestion(existing.question, existing.source || 'online');
+        renderQuestion(existing.question, 'online');
       } else {
         // Choose today's question using day-of-year modulo list length
         const scheduledQ = getTodayScheduledQuestion(dateKey);
@@ -1046,56 +1176,7 @@
       const badgeEl = document.getElementById('prompt-source-badge');
       questionEl.classList.remove('loading');
       questionEl.textContent = questionText;
-
-      if (source === 'gemini') {
-        badgeEl.textContent = '✨ Gemini Reflection';
-        badgeEl.classList.add('gemini');
-      } else {
-        badgeEl.textContent = '🌿 Daily Reflection';
-        badgeEl.classList.remove('gemini');
-      }
-    }
-
-    // 8. OPTIONAL GEMINI API GENERATION (Active only when user enters key)
-    async function generateWithGemini() {
-      const apiKey = (localStorage.getItem(STORAGE_KEYS.API_KEY) || '').trim();
-      if (!apiKey) return;
-
-      const questionEl = document.getElementById('daily-question');
-      questionEl.classList.add('loading');
-      questionEl.textContent = 'Gathering personalized Gemini reflection...';
-
-      const model = localStorage.getItem(STORAGE_KEYS.MODEL) || 'gemini-3.8-flash';
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-
-      const promptDirective =
-        "Write exactly ONE complete, deeply self-reflective contemplative journal prompt in two parts (2 sentences total, around 35 to 60 words). " +
-        "First sentence: set a warm, nostalgic, soulful reflection context. " +
-        "Second sentence: ask a direct open-ended personal question ending with a question mark (?) that invites inward writing. Plain text only.";
-
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ role: 'user', parts: [{ text: promptDirective }] }]
-          })
-        });
-
-        if (!response.ok) throw new Error(`Gemini status ${response.status}`);
-        const data = await response.json();
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text?.replace(/^["'“”]+|["'“”]+$/g, '').trim();
-
-        if (text && text.endsWith('?')) {
-          renderQuestion(text, 'gemini');
-          saveCurrentEntry();
-        } else {
-          throw new Error('Question incomplete');
-        }
-      } catch (err) {
-        console.warn('Gemini call failed, falling back to random list question:', err);
-        loadDateSanctuary(viewingDateKey, true);
-      }
+      badgeEl.textContent = '🌿 Daily Reflection';
     }
 
     // 9. LOCAL STORAGE ENTRY MANAGEMENT
@@ -1110,14 +1191,12 @@
     function saveCurrentEntry() {
       const textarea = document.getElementById('diary-entry');
       const question = document.getElementById('daily-question').textContent.trim();
-      const badgeEl = document.getElementById('prompt-source-badge');
-      const source = badgeEl.classList.contains('gemini') ? 'gemini' : 'online';
       const entries = getAllEntries();
 
       entries[viewingDateKey] = {
         date: viewingDateKey,
         question,
-        source,
+        source: 'online',
         mood: activeMood,
         text: textarea.value,
         updatedAt: new Date().toISOString()
@@ -1141,12 +1220,6 @@
           btn.classList.remove('active');
         }
       });
-    }
-
-    function checkGeminiButtonVisibility() {
-      const apiKey = (localStorage.getItem(STORAGE_KEYS.API_KEY) || '').trim();
-      const geminiBtn = document.getElementById('gemini-ask-btn');
-      geminiBtn.style.display = apiKey ? 'inline-flex' : 'none';
     }
 
     // 10. SOFT FRIENDLY TOAST NOTIFICATION
@@ -1242,7 +1315,7 @@
       };
 
       recognition.onerror = (event) => {
-        console.warn('Speech recognition status/error:', event.error);
+        console.warn('Speech recognition notice:', event.error);
         if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
           isUserListening = false;
           stopDictationUI();
@@ -1261,7 +1334,7 @@
               try {
                 recognition.start();
               } catch (e) {
-                console.warn('Recognition restart skipped:', e);
+                console.warn('Recognition restart notice:', e);
               }
             }
           }, 150);
@@ -1476,8 +1549,10 @@
 
     // 17. INITIAL BOOT
     document.addEventListener('DOMContentLoaded', async () => {
+      // Clean up any old Gemini API keys or model settings
+      cleanupOldGeminiKeys();
+
       applyTheme(localStorage.getItem(STORAGE_KEYS.THEME) || 'light');
-      checkGeminiButtonVisibility();
       setupVoiceLanguageSelectors();
       initSpeechRecognition();
 
@@ -1498,9 +1573,6 @@
       document.getElementById('redraw-question-btn').addEventListener('click', () => {
         loadDateSanctuary(viewingDateKey, true);
       });
-
-      // Optional Ask Gemini
-      document.getElementById('gemini-ask-btn').addEventListener('click', generateWithGemini);
 
       // Copy & Share
       document.getElementById('copy-entry-btn').addEventListener('click', copyActiveReflection);
@@ -1595,20 +1667,12 @@
 
       // Settings Modal
       const setModal = document.getElementById('settings-modal');
-      const apiInput = document.getElementById('api-key-input');
-      const modSelect = document.getElementById('model-select');
       document.getElementById('open-settings-btn').addEventListener('click', () => {
-        apiInput.value = localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
-        modSelect.value = localStorage.getItem(STORAGE_KEYS.MODEL) || 'gemini-3.8-flash';
         document.getElementById('settings-voice-lang-select').value = activeVoiceLang;
         setModal.classList.add('open');
       });
       document.getElementById('close-settings-btn').addEventListener('click', () => setModal.classList.remove('open'));
-      document.getElementById('cancel-settings-btn').addEventListener('click', () => setModal.classList.remove('open'));
       document.getElementById('save-settings-btn').addEventListener('click', () => {
-        localStorage.setItem(STORAGE_KEYS.API_KEY, apiInput.value.trim());
-        localStorage.setItem(STORAGE_KEYS.MODEL, modSelect.value);
-        checkGeminiButtonVisibility();
         setModal.classList.remove('open');
       });
     });
